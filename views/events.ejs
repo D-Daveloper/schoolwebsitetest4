@@ -1,0 +1,58 @@
+<%- include("partials/eventsHeader.ejs") %>
+
+    <section class="events-image-background">
+        <div class="event-section-container">
+            <div class="events-overlay"></div>
+            <div class="events-image-background-container">
+                <div class="events-content">
+                    <h2>
+                        Events
+                    </h2>
+                    <p>
+                        Home > Events    
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="events-header-section">
+        <div class="container">
+            <div class="event-header">
+                <h2><span class="event-span">Event</span>s</h2>
+                <p class="">
+                    Separated they live in. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country
+                </p>
+            </div>
+            
+            <div class="event-cards-container">
+                <% event.forEach(Event => { %>
+                <div class="event-card fade-in-up">
+                        <div class="event-image-container">
+                            <img src="/pictures/<%= Event.image %>"alt="">
+                        </div>
+                        <div class="event-content-container">
+                            <h2 class="event-card-title">
+                                <%= Event.title %>
+                            </h2> 
+                            <p class="event-content">
+                                <%= Event.description %>
+                            </p>
+                            <div class="event-date-container">
+                                <p class="event-date">
+                                    coming up: <%= Event.date.toDateString() %>
+                                </p>
+                                <button class="event-button">
+                                    read more
+                                </button>
+                            </div>
+                        </div>
+                </div>
+                <% }); %>
+            </div>
+            <!-- <img src="/pictures/about2.jpg" alt="" style="width: 30px; height: 50px;"> -->
+        </div>
+
+    </section>
+    <%- include("partials/footer_events.ejs") %>   
+</body>
+</html>

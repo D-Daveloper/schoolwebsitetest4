@@ -1,0 +1,84 @@
+<%- include("partials/header_admin")  %>
+<style>
+    body{
+        background-image: none;
+        background-color: black;
+        color: white;
+    }
+    
+    nav{
+        background-color: #417690;
+        width: 100%;
+    } 
+</style>    
+<div class="wrapper">
+    <section class="add-section">
+        <h1>
+            collections
+        </h1>
+        <ul class="add-ul">
+            <li class="db"> <span class="collections"><a href="/viewEvents">events</a></span>
+                <div>
+                    <a href="/addEvent">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                </div>
+            </li>
+            <li class="db"> <span class="collections"><a href="/viewTestimonals">testimonials</a></span>
+                <div>
+                    <a href="/admin/addTestimonial">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                </div>
+            </li>           
+            <li class="db"> <span class="collections"><a href="/viewEmails">emails</a></span>
+                <div>
+                    <a href="/viewEmails">
+                        <p>
+                            view
+                        </p>
+                    </a> 
+                </div>
+            </li>
+        </ul>
+    </section>
+    <section class="add-form">
+        <h1>Add Event</h1>
+        <form action="/addEvent" method="POST" enctype="multipart/form-data" id="addEventForm">
+            <div class="form">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required><br>
+                
+            </div>
+
+            <div class="form">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4" required></textarea><br>
+            </div>
+
+            <div class="form">
+                <label for="date">Date:</label>
+                <input class="date" type="date" id="date" name="date" required><br>
+            </div>
+
+            <div class="form">
+                <label for="eventImage">Image:</label>
+                <input type="file" id="eventImage" name="eventImage" accept="image/*" required><br>
+            </div>
+
+            <div class="button">
+                <button type="submit">Add Event</button>
+                <div class="span">
+                    <span>saved!!</span>
+                </div>                
+            </div>
+        </form>
+    </section>
+</div>
+<%- include("partials/adminFooter") %>

@@ -1,0 +1,66 @@
+<%- include("partials/header_admin.ejs")  %>
+<style>
+    body{
+        background-image: none;
+        background-color: black;
+        color: white;
+    }
+    
+    nav{
+        background-color: #417690;
+        width: 100%;
+    } 
+    
+</style>
+<section>
+    <div class="wrapper admin-wrapper">
+        <h1>
+            collections
+        </h1>
+        <ul>
+            <li class="db">events 
+                <div>
+                    <a href="/addEvent">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                    <a href="/viewEvents">
+                        <p>
+                            <i class="fa-solid fa-pencil"></i>
+                            change
+                        </p>
+                    </a> 
+                </div>
+            </li>
+            <li class="db">testimonial 
+                <div>
+                    <a href="/admin/addTestimonial">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                    <a href="/admin/viewTestimonial">
+                        <p>
+                            <i class="fa-solid fa-pencil"></i>
+                            change
+                        </p>
+                    </a> 
+                </div>
+            </li>            
+            <li class="db">emails 
+                <div>
+                    <a href="/viewEmails">
+                        <p>
+                            view
+                        </p>
+                    </a> 
+                </div>
+            </li>
+        </ul>
+    </div>
+
+</section>
+<%- include("partials/adminFooter") %>

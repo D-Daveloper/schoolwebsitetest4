@@ -1,0 +1,133 @@
+<%- include("partials/header_admin")  %>
+<style>
+    body{
+        background-image: none;
+        background-color: black;
+        color: white;
+    }
+    
+    nav{
+        background-color: #417690;
+        width: 100%;    
+    } 
+</style>    
+<div class="wrapper">
+    <section class="add-section">
+        <h1>
+            collections
+        </h1>
+        <ul>
+            <li class="db"> <span class="collections"><a href="/viewEvents">events</a></span>
+                <div>
+                    <a href="/addEvent">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                </div>
+            </li>
+            <li class="db"> <span class="collections"><a href="/admin/viewTestimonial">testimonials</a></span>
+                <div>
+                    <a href="/admin/addTestimonial">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                </div>
+            </li>           
+            <li class="db"> <span class="collections"><a href="viewEmails">emails</a></span>
+                <div>
+                    <a href="/viewEmails">
+                        <p>
+                            view
+                        </p>
+                    </a> 
+                </div>
+            </li>
+        </ul>
+    </section>
+        <!-- addEvent.ejs -->
+    <section>
+        <div class="viewEvents-head">
+            <h1>view Testimonial</h1>
+            <div class="inner-viewevents-head">
+                <span class="deleted-span">
+                    deleted!
+                </span>
+                <a href="/admin/addTestimonial">
+                    <button >
+                    add testimonial
+                    </button>
+                </a>
+            </div>
+
+        </div>
+        <div class="events-container">
+            <ul class="">
+                <% testimonial.forEach(testimonial => { %>
+                <div class="veiwEvent" >
+                    <div>
+                        <li class="events"><a href="/editTestimonial/<%= testimonial._id %>"><%= testimonial.name %></a></li>
+                    </div>
+                    <div class="deleted-button" data-event-id="<%= testimonial._id %>"><a href="/deleteTestimonail/<%= testimonial._id %>"><i class="fa-solid fa-trash"></i></a></div>
+                </div>
+                <% }); %>
+            </ul>
+        </div>
+    </section>
+</div>
+<script>
+        document.querySelectorAll('.deleted-button').forEach(button => {
+        button.addEventListener('click', async function(event) {
+        event.preventDefault(); // Prevent default action
+
+        console.log('Fetch response:');
+        const show_message = document.querySelector(".deleted-span");
+        
+        function show() {
+            show_message.classList.add("show-successfull");
+        };
+    
+        function hide() {
+            show_message.classList.remove("show-successfull");
+        };
+        
+
+        const eventId = this.dataset.eventId; // Get the event ID from data attribute
+        console.log('Event ID:', eventId);
+
+        try {
+            const response = await fetch(`/deleteTestimonial/${eventId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                console.log('Event deleted successfully');
+                setTimeout(() => {
+                    show();
+                    setTimeout(() => {
+                        hide();
+                        // Reload the page after a delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000); // Adjust the delay as needed
+                    }, 1000); // Adjust the delay as needed
+                }, 100);
+                // Optionally, perform any other actions after successful deletion
+                // For example, update the UI or display a success message
+            } else {
+                console.error('Failed to delete event:', response.statusText);
+                // Handle error or display error message to the user
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+            // Handle network error or display error message to the user
+        }
+        
+    });
+});
+
+</script>
+<%- include("partials/adminFooter") %>

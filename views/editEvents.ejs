@@ -1,0 +1,104 @@
+<%- include("partials/header_admin")  %>
+<style>
+    body{
+        background-image: none;
+        background-color: black;
+        color: white;
+    }
+    
+    nav{
+        background-color: #417690;
+        width: 100%;
+    } 
+</style>
+<section class="add-form">
+    <h1>event</h1>
+  
+    <h2>Edit Event</h2>
+    <form id="editEventform" data-event-id="<%= event._id %>" action="/event/<%= event._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_method" value="PUT"/>
+        <div class="form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="<%= event.title %>" required><br>
+            
+        </div>
+      
+        <div class="form">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4" required> <%= event.description %></textarea><br>
+        </div>
+  
+        <div class="form">
+            <label for="date">Date:</label>
+            <input class="date" type="date" id="date" name="date" value="<%= event.date.toISOString().split('T')[0] %>" required><br>
+        </div>
+
+        <div class="form">
+            <label for="eventImage">Image:</label>
+            <div class="inner-form">
+                <span>currently: <%= event.image %></span>
+                <input type="file" id="eventImage" name="eventImage" accept="image/*" required><br>
+            </div>
+
+        </div>
+  
+        <div class="button">
+            <button type="submit">Update Event</button>
+            <div class="span">
+                <span>updated!</span>
+            </div>                
+        </div>
+    </form>
+</section>
+<script>
+    document.getElementById('editEventform').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const form = document.getElementById('editEventform');
+    const formData = new FormData(form); // Create FormData object from the form
+    console.log(formData)
+    // Output the form data for debugging purposes
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+    const eventId = this.dataset.eventId;
+
+    // Example of using fetch to send a POST request to the server
+    const show_message = document.querySelector(".span");
+
+    function show() {
+        show_message.classList.add("show-successfull");
+    };
+
+    function hide() {
+        show_message.classList.remove("show-successfull");
+    };
+
+    fetch(`/event/${eventId}`, {
+        method: 'PUT',
+        body: formData // Send FormData directly without JSON.stringify
+    })
+    .then(response => {
+        if (response.ok) {
+            setTimeout(() => {
+                    show();
+                    setTimeout(() => {
+                        hide();
+                        // Reload the page after a delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000); // Adjust the delay as needed
+                    }, 1000); // Adjust the delay as needed
+                }, 100);
+            // Clear input fields after successful submission
+        } else {
+            throw new Error('Failed to subscribe');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to subscribe: ' + error.message);
+    });
+});
+</script>
+<%- include("partials/adminFooter") %>

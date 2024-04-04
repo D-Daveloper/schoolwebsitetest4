@@ -1,0 +1,122 @@
+<%- include("partials/header_admin")  %>
+<style>
+    body{
+        background-image: none;
+        background-color: black;
+        color: white;
+    }
+    
+    nav{
+        background-color: #417690;
+        width: 100%;
+    } 
+</style>    
+<div class="wrapper">
+    <section class="add-section">
+        <h1>
+            collections
+        </h1>
+        <ul class="add-ul">
+            <li class="db"> <span class="collections"><a href="/viewEvents">events</a></span>
+                <div>
+                    <a href="/addEvent">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                </div>
+            </li>
+            <li class="db"> <span class="collections"><a href="/viewTestimonials">testimonials</a></span>
+                <div>
+                    <a href="/admin/addTestimonial">
+                        <p>
+                            <i class="fa-solid fa-plus"></i>
+                            add
+                        </p>
+                    </a> 
+                </div>
+            </li>           
+            <li class="db"> <span class="collections"><a href="/viewEmails">emails</a></span>
+                <div>
+                    <a href="/viewEmails">
+                        <p>
+                            view
+                        </p>
+                    </a> 
+                </div>
+            </li>
+        </ul>
+    </section>
+    <section class="add-form">
+        <h1>Add Testimonial</h1>
+        <form action="/addTestimonial" method="POST" enctype="multipart/form-data" id="addTestimonailForm">
+            <div class="form">
+                <label for="title">Name:</label>
+                <input type="text" id="title" name="name" required><br>
+                
+            </div>
+
+            <div class="form">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4" required></textarea><br>
+            </div>
+
+            <div class="form">
+                <label for="eventImage">Image:</label>
+                <input type="file" id="eventImage" name="testimonialImage" accept="image/*" required><br>
+            </div>
+
+            <div class="button">
+                <button type="submit">Add Testimonial</button>
+                <div class="span">
+                    <span>saved!!</span>
+                </div>                
+            </div>
+        </form>
+    </section>
+</div>
+<script>
+        document.getElementById('addTestimonailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+        
+            const form = document.getElementById('addTestimonailForm');
+            const formData = new FormData(form); // Create FormData object from the form
+            console.log(formData)
+            // Output the form data for debugging purposes
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+        
+            // Example of using fetch to send a POST request to the server
+            const show_message = document.querySelector(".span");
+        
+            function show() {
+                show_message.classList.add("show-successfull");
+            };
+        
+            function hide() {
+                show_message.classList.remove("show-successfull");
+            };
+        
+            fetch('/addTestimonial', {
+                method: 'POST',
+                body: formData // Send FormData directly without JSON.stringify
+            })
+            .then(response => {
+                if (response.ok) {
+                    setTimeout(show, 100);
+                    setTimeout(hide, 1000);
+                    // Clear input fields after successful submission
+                    form.reset();
+                } else {
+                    throw new Error('Failed to subscribe');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to subscribe: ' + error.message);
+            });
+        })
+</script>
+<%- include("partials/adminFooter") %>
