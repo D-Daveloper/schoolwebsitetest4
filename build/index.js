@@ -1,41 +1,34 @@
 "use strict";
 
-var _express = _interopRequireDefault(require("express"));
-var _fs = _interopRequireDefault(require("fs"));
-var _bodyParser = _interopRequireDefault(require("body-parser"));
-var _cors = _interopRequireDefault(require("cors"));
-var _dotenv = require("dotenv");
-var _mongoose = _interopRequireDefault(require("mongoose"));
-var _multer = _interopRequireDefault(require("multer"));
-var _eventDB = require("./models/eventDB.js");
-var _console = require("console");
-var _methodOverride = _interopRequireDefault(require("method-override"));
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-(0, _dotenv.config)(); // Load environment variables from .env file
+const express = require("express");
+const fs = require("fs");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
+const multer = require("multer");
+const { Testimonial, Event, Email } = require("./models/eventDB.js");
+const console = require("console");
+const methodOverride = require("method-override");
 
-const app = (0, _express.default)();
+dotenv.config(); // Load environment variables from .env file
+
+const app = express();
 const port = process.env.PORT || 3000;
-app.use((0, _methodOverride.default)("_method"));
-app.use((0, _cors.default)());
+
+app.use(methodOverride("_method"));
+app.use(cors());
 app.set('views', './views');
 app.set('view engine', 'ejs');
-app.use(_express.default.urlencoded({
-  extended: true
-}));
-app.use(_express.default.static('public'));
-app.use(_bodyParser.default.json());
-_bodyParser.default.urlencoded({
-  extended: true
-});
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to MongoDB
 const start = async () => {
   try {
-    await _mongoose.default.connect(process.env.MONGODB, {}).then(() => console.log("connected"));
+    await mongoose.connect(process.env.MONGODB, {}).then(() => console.log("connected"));
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
@@ -44,7 +37,7 @@ const start = async () => {
   }
 };
 start();
-const storage = _multer.default.diskStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/pictures');
   },
@@ -54,14 +47,14 @@ const storage = _multer.default.diskStorage({
 });
 
 // Set up multer for file uploads
-const upload = (0, _multer.default)({
+const upload = multer ({
   storage
 });
 
 // Load emails from JSON file on server start
 let emails = [];
 try {
-  const data = _fs.default.readFileSync('./emails.json');
+  const data = fs.readFileSync('./emails.json');
   emails = JSON.parse(data);
 } catch (err) {
   console.error('Error reading emails:', err);
@@ -75,7 +68,7 @@ function getEmail(req, res, next) {
 app.use(getEmail);
 app.get('/', async (req, res) => {
   try {
-    const testimonials = await _eventDB.Testimonial.find();
+    const testimonials = await Testimonial.find();
     res.render('index', {
       testimonial: testimonials
     });
@@ -98,7 +91,7 @@ app.post("/login", (req, res) => {
 });
 app.get('/events', async (req, res) => {
   try {
-    const event = await _eventDB.Event.find();
+    const event = await Event.find();
     if (!event) {
       throw new Error('Event not found');
     }
@@ -123,7 +116,7 @@ app.post('/addEvent', upload.single('eventImage'), async (req, res) => {
   } = req.body;
   const image = req.file ? req.file.filename : ''; // Store the uploaded image filename
 
-  const newEvent = new _eventDB.Event({
+  const newEvent = new Event({
     title: title,
     description: description,
     date: date,
@@ -138,7 +131,7 @@ app.post('/addEvent', upload.single('eventImage'), async (req, res) => {
   }
 });
 app.get('/viewEvents', async (req, res) => {
-  const events = await _eventDB.Event.find();
+  const events = await Event.find();
   res.render("viewEvent", {
     event: events
   });
@@ -146,7 +139,7 @@ app.get('/viewEvents', async (req, res) => {
 app.get('/editEvents/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
   try {
-    const event = await _eventDB.Event.findById(eventId);
+    const event = await Event.findById(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
@@ -171,7 +164,7 @@ app.put('/event/:eventId', upload.single('eventImage'), async (req, res) => {
   // console.log(req.file)
 
   try {
-    const event = await _eventDB.Event.findById(eventId);
+    const event = await Event.findById(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
@@ -197,7 +190,7 @@ app.put('/event/:eventId', upload.single('eventImage'), async (req, res) => {
 app.delete('/deleteEvents/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
   try {
-    const event = await _eventDB.Event.findByIdAndDelete(eventId);
+    const event = await Event.findByIdAndDelete(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
@@ -219,7 +212,7 @@ app.post('/addTestimonial', upload.single('testimonialImage'), async (req, res) 
   } = req.body;
   const image = req.file ? req.file.filename : ''; // Store the uploaded image filename
 
-  const newTestimonial = new _eventDB.Testimonial({
+  const newTestimonial = new Testimonial({
     name: name,
     description: description,
     image: image
@@ -233,7 +226,7 @@ app.post('/addTestimonial', upload.single('testimonialImage'), async (req, res) 
   }
 });
 app.get('/admin/viewTestimonial', async (req, res) => {
-  const testimonial = await _eventDB.Testimonial.find();
+  const testimonial = await Testimonial.find();
   res.render("viewTestimonials", {
     testimonial: testimonial
   });
@@ -241,7 +234,7 @@ app.get('/admin/viewTestimonial', async (req, res) => {
 app.get('/editTestimonial/:testimonialId', async (req, res) => {
   const testimonialId = req.params.testimonialId;
   try {
-    const testimonial = await _eventDB.Testimonial.findById(testimonialId);
+    const testimonial = await Testimonial.findById(testimonialId);
     if (!testimonial) {
       throw new Error('Event not found');
     }
@@ -266,7 +259,7 @@ app.put('/editTestimonial/:testimonialId', upload.single('testimonialImage'), as
   // console.log(req.file)
 
   try {
-    const testimonial = await _eventDB.Testimonial.findById(testimonialId);
+    const testimonial = await Testimonial.findById(testimonialId);
     if (!testimonial) {
       throw new Error('Event not found');
     }
@@ -291,7 +284,7 @@ app.put('/editTestimonial/:testimonialId', upload.single('testimonialImage'), as
 app.delete('/deleteTestimonial/:testimonialId', async (req, res) => {
   const testimonialId = req.params.testimonialId;
   try {
-    const testimonial = await _eventDB.Testimonial.findByIdAndDelete(testimonialId);
+    const testimonial = await Testimonial.findByIdAndDelete(testimonialId);
     if (!testimonial) {
       throw new Error('Event not found');
     }
@@ -325,7 +318,7 @@ app.post('/subscribe', async (req, res) => {
 });
 app.get("/viewEmails", async (req, res) => {
   try {
-    const emails = await _eventDB.Email.find();
+    const emails = await Email.find();
     res.render("emails", {
       email: emails
     });
@@ -340,7 +333,7 @@ app.get('/admin', (req, res) => {
 
 // Function to save emails to JSON file
 function saveEmailsToJson() {
-  _fs.default.writeFile('./emails.json', JSON.stringify(emails), err => {
+  fs.writeFile('./emails.json', JSON.stringify(emails), err => {
     if (err) {
       console.error('Error saving emails:', err);
     } else {
@@ -352,7 +345,7 @@ function saveEmailsToJson() {
 // Routes
 app.get('/admin', (req, res) => {
   // Fetch all events from the database
-  _eventDB.Event.find({}, (err, events) => {
+  Event.find({}, (err, events) => {
     if (err) {
       console.log(err);
     } else {
