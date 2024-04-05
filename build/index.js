@@ -4,18 +4,18 @@ var _express = _interopRequireDefault(require("express"));
 var _fs = _interopRequireDefault(require("fs"));
 var _bodyParser = _interopRequireDefault(require("body-parser"));
 var _cors = _interopRequireDefault(require("cors"));
-import { config } from "dotenv";
+var _dotenv = require("dotenv");
 var _mongoose = _interopRequireDefault(require("mongoose"));
 var _multer = _interopRequireDefault(require("multer"));
-import { Testimonial, Event, Email } from "./models/eventDB.js";
-import _console from "console";
+var _eventDB = require("./models/eventDB.js");
+var _console = require("console");
 var _methodOverride = _interopRequireDefault(require("method-override"));
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : {
     default: obj
   };
 }
-(0, config)(); // Load environment variables from .env file
+(0, _dotenv.config)(); // Load environment variables from .env file
 
 const app = (0, _express.default)();
 const port = process.env.PORT || 3000;
@@ -75,7 +75,7 @@ function getEmail(req, res, next) {
 app.use(getEmail);
 app.get('/', async (req, res) => {
   try {
-    const testimonials = await Testimonial.find();
+    const testimonials = await _eventDB.Testimonial.find();
     res.render('index', {
       testimonial: testimonials
     });
@@ -98,7 +98,7 @@ app.post("/login", (req, res) => {
 });
 app.get('/events', async (req, res) => {
   try {
-    const event = await Event.find();
+    const event = await _eventDB.Event.find();
     if (!event) {
       throw new Error('Event not found');
     }
@@ -123,7 +123,7 @@ app.post('/addEvent', upload.single('eventImage'), async (req, res) => {
   } = req.body;
   const image = req.file ? req.file.filename : ''; // Store the uploaded image filename
 
-  const newEvent = new Event({
+  const newEvent = new _eventDB.Event({
     title: title,
     description: description,
     date: date,
@@ -138,7 +138,7 @@ app.post('/addEvent', upload.single('eventImage'), async (req, res) => {
   }
 });
 app.get('/viewEvents', async (req, res) => {
-  const events = await Event.find();
+  const events = await _eventDB.Event.find();
   res.render("viewEvent", {
     event: events
   });
@@ -146,7 +146,7 @@ app.get('/viewEvents', async (req, res) => {
 app.get('/editEvents/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
   try {
-    const event = await Event.findById(eventId);
+    const event = await _eventDB.Event.findById(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
@@ -171,7 +171,7 @@ app.put('/event/:eventId', upload.single('eventImage'), async (req, res) => {
   // console.log(req.file)
 
   try {
-    const event = await Event.findById(eventId);
+    const event = await _eventDB.Event.findById(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
@@ -197,7 +197,7 @@ app.put('/event/:eventId', upload.single('eventImage'), async (req, res) => {
 app.delete('/deleteEvents/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
   try {
-    const event = await Event.findByIdAndDelete(eventId);
+    const event = await _eventDB.Event.findByIdAndDelete(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
@@ -219,7 +219,7 @@ app.post('/addTestimonial', upload.single('testimonialImage'), async (req, res) 
   } = req.body;
   const image = req.file ? req.file.filename : ''; // Store the uploaded image filename
 
-  const newTestimonial = new Testimonial({
+  const newTestimonial = new _eventDB.Testimonial({
     name: name,
     description: description,
     image: image
@@ -233,7 +233,7 @@ app.post('/addTestimonial', upload.single('testimonialImage'), async (req, res) 
   }
 });
 app.get('/admin/viewTestimonial', async (req, res) => {
-  const testimonial = await Testimonial.find();
+  const testimonial = await _eventDB.Testimonial.find();
   res.render("viewTestimonials", {
     testimonial: testimonial
   });
@@ -241,7 +241,7 @@ app.get('/admin/viewTestimonial', async (req, res) => {
 app.get('/editTestimonial/:testimonialId', async (req, res) => {
   const testimonialId = req.params.testimonialId;
   try {
-    const testimonial = await Testimonial.findById(testimonialId);
+    const testimonial = await _eventDB.Testimonial.findById(testimonialId);
     if (!testimonial) {
       throw new Error('Event not found');
     }
@@ -266,7 +266,7 @@ app.put('/editTestimonial/:testimonialId', upload.single('testimonialImage'), as
   // console.log(req.file)
 
   try {
-    const testimonial = await Testimonial.findById(testimonialId);
+    const testimonial = await _eventDB.Testimonial.findById(testimonialId);
     if (!testimonial) {
       throw new Error('Event not found');
     }
@@ -291,7 +291,7 @@ app.put('/editTestimonial/:testimonialId', upload.single('testimonialImage'), as
 app.delete('/deleteTestimonial/:testimonialId', async (req, res) => {
   const testimonialId = req.params.testimonialId;
   try {
-    const testimonial = await Testimonial.findByIdAndDelete(testimonialId);
+    const testimonial = await _eventDB.Testimonial.findByIdAndDelete(testimonialId);
     if (!testimonial) {
       throw new Error('Event not found');
     }
@@ -309,7 +309,7 @@ app.post('/subscribe', async (req, res) => {
   if (!email || emails.includes(email)) {
     res.status(400).send('Invalid email or duplicate email.');
   }
-  const newEmail = new Email({
+  const newEmail = new _eventDB.Email({
     name: email
   });
   try {
@@ -325,7 +325,7 @@ app.post('/subscribe', async (req, res) => {
 });
 app.get("/viewEmails", async (req, res) => {
   try {
-    const emails = await Email.find();
+    const emails = await _eventDB.Email.find();
     res.render("emails", {
       email: emails
     });
@@ -352,7 +352,7 @@ function saveEmailsToJson() {
 // Routes
 app.get('/admin', (req, res) => {
   // Fetch all events from the database
-  Event.find({}, (err, events) => {
+  _eventDB.Event.find({}, (err, events) => {
     if (err) {
       console.log(err);
     } else {
