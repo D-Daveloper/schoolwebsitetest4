@@ -16,7 +16,10 @@ const port = process.env.PORT || 3000;
 
 app.use(methodOverride("_method"))
 app.use(cors());
+app.set('views', './views');
 app.set('view engine', 'ejs');
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(bodyParser.json());
