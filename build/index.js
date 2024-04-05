@@ -54,7 +54,12 @@ const upload = multer ({
 // Load emails from JSON file on server start
 let emails = [];
 try {
-  const data = fs.readFileSync('./emails.json');
+  const filePath = 'emails.json';
+  if (!fs.existsSync(filePath)) {
+    // Create the file if it doesn't exist
+    fs.writeFileSync(filePath, '[]'); // You can initialize it with empty array or any default content
+  }
+  const data = fs.readFileSync('emails.json');
   emails = JSON.parse(data);
 } catch (err) {
   console.error('Error reading emails:', err);
@@ -302,7 +307,7 @@ app.post('/subscribe', async (req, res) => {
   if (!email || emails.includes(email)) {
     res.status(400).send('Invalid email or duplicate email.');
   }
-  const newEmail = new _eventDB.Email({
+  const newEmail = new Email({
     name: email
   });
   try {
@@ -333,7 +338,7 @@ app.get('/admin', (req, res) => {
 
 // Function to save emails to JSON file
 function saveEmailsToJson() {
-  fs.writeFile('./emails.json', JSON.stringify(emails), err => {
+  fs.writeFile('emails.json', JSON.stringify(emails), err => {
     if (err) {
       console.error('Error saving emails:', err);
     } else {
