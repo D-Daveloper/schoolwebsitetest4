@@ -53,7 +53,7 @@ const upload = multer ({
 
 // Load emails from JSON file on server start
 let emails = [];
-app.use(getEmail);
+
 app.get('/', async (req, res) => {
   try {
     const testimonials = await Testimonial.find();
