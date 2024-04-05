@@ -53,23 +53,6 @@ const upload = multer ({
 
 // Load emails from JSON file on server start
 let emails = [];
-// try {
-//   const filePath = 'emails.json';
-//   if (!fs.existsSync(filePath)) {
-//     // Create the file if it doesn't exist
-//     fs.writeFileSync(filePath, '[]'); // You can initialize it with empty array or any default content
-//   }
-//   const data = fs.readFileSync('emails.json');
-//   emails = JSON.parse(data);
-// } catch (err) {
-//   console.error('Error reading emails:', err);
-// }
-function getEmail(req, res, next) {
-  let input_value = req.body.Email;
-  // console.log(input_value);
-  next();
-}
-;
 app.use(getEmail);
 app.get('/', async (req, res) => {
   try {
@@ -316,8 +299,6 @@ app.post('/subscribe', async (req, res) => {
     console.log(e.message);
   }
   emails.push(email);
-  // saveEmailsToJson(); // Save emails to JSON file
-  // res.send('Subscription successful!');
 });
 app.get("/viewEmails", async (req, res) => {
   try {
@@ -334,27 +315,4 @@ app.get('/admin', (req, res) => {
   res.render("login");
 });
 
-// Function to save emails to JSON file
-// function saveEmailsToJson() {
-//   fs.writeFile('emails.json', JSON.stringify(emails), err => {
-//     if (err) {
-//       console.error('Error saving emails:', err);
-//     } else {
-//       console.log('Emails saved successfully!');
-//     }
-//   });
-// }
-
-// Routes
-// app.get('/admin', (req, res) => {
-//   // Fetch all events from the database
-//   Event.find({}, (err, events) => {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       res.render('admin', {
-//         events: events
-//       });
-//     }
-//   });
-// });
+module.exports = app;
