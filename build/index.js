@@ -300,9 +300,7 @@ app.delete('/deleteTestimonial/:testimonialId', async (req, res) => {
   }
 });
 app.post('/subscribe', async (req, res) => {
-  const {
-    email
-  } = req.body;
+  const { email  } = req.body;
   // Check if the email is empty or already exists in the array
   if (!email || emails.includes(email)) {
     res.status(400).send('Invalid email or duplicate email.');
@@ -348,15 +346,15 @@ app.get('/admin', (req, res) => {
 // }
 
 // Routes
-app.get('/admin', (req, res) => {
-  // Fetch all events from the database
-  Event.find({}, (err, events) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render('admin', {
-        events: events
-      });
-    }
-  });
-});
+// app.get('/admin', (req, res) => {
+//   // Fetch all events from the database
+//   Event.find({}, (err, events) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       res.render('admin', {
+//         events: events
+//       });
+//     }
+//   });
+// });
