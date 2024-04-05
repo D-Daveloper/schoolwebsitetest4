@@ -61,7 +61,7 @@ const upload = (0, _multer.default)({
 // Load emails from JSON file on server start
 let emails = [];
 try {
-  const data = _fs.default.readFileSync('emails.json');
+  const data = _fs.default.readFileSync('./emails.json');
   emails = JSON.parse(data);
 } catch (err) {
   console.error('Error reading emails:', err);
