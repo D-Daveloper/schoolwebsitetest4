@@ -334,4 +334,3 @@ app.get('/admin', (req, res) => {
 });
 
 
-module.exports = app;
