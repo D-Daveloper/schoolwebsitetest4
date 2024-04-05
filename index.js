@@ -281,7 +281,6 @@ app.post('/subscribe', async (req, res) => {
     // Check if the email is empty or already exists in the array
     if (!email || emails.includes(email)) {
         res.status(400).send('Invalid email or duplicate email.');
-        return;
     }
     const newEmail = new Email({
       name: email,
